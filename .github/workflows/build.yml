@@ -9,6 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout NexusPulse repo
+        uses: actions/checkout@v4
+
       - name: Checkout Telegram-FOSS
         run: |
           git clone --depth=1 https://github.com/Telegram-FOSS-Team/Telegram-FOSS.git source
