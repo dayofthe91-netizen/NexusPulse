@@ -1,0 +1,60 @@
+name: Build NexusPulse APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Telegram-FOSS
+        run: |
+          git clone --depth=1 https://github.com/Telegram-FOSS-Team/Telegram-FOSS.git source
+          cd source
+          git submodule update --init --recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Python + Pillow
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install pillow
+
+      - name: Apply NexusPulse mod (rebrand + ghost mode)
+        run: |
+          python3 $GITHUB_WORKSPACE/scripts/apply_mod.py
+        working-directory: source
+
+      - name: Show Android SDK components
+        run: ls $ANDROID_HOME/ndk-bundle 2>/dev/null; ls $ANDROID_HOME/ndk 2>/dev/null || true
+
+      - name: Build APK (debug, signed with debug key)
+        working-directory: source
+        run: |
+          export KEYSTORE_PASS=android
+          export KEY_ALIAS=androiddebugkey
+          export KEY_PASS=android
+          ./gradlew assembleAfatDebug --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: |
+          find source/TMessagesProj/build/outputs/apk -name "*.apk" -exec ls -la {} \;
+          find source/TMessagesProj/build/outputs/apk -name "*.apk" -exec cp {} NexusPulse.apk \;
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexusPulse-APK
+          path: NexusPulse.apk
+
+      - name: Release (auto-release on tag builds)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: NexusPulse.apk
