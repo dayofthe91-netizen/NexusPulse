@@ -70,15 +70,34 @@ def rebrand_strings():
     changed.append("res/values*/strings.xml")
 
 def rebrand_gradle():
-    p = os.path.join(REPO, "TMessagesProj", "build.gradle")
+    # current Telegram-FOSS: package is set via APP_PACKAGE in gradle.properties
+    p = os.path.join(REPO, "gradle.properties")
     s = read(p)
-    s, c = re.subn(r'applicationId\s+"[^"]+"',
-                   f'applicationId "{NEW_APPLICATION_ID}"', s)
+    s, c = re.subn(r'APP_PACKAGE\s*=\s*\S+', f'APP_PACKAGE={NEW_APPLICATION_ID}', s)
     if c == 0:
-        raise SystemExit("[WARN] applicationId not found in TMessagesProj/build.gradle")
+        # older layout: applicationId inside TMessagesProj/build.gradle
+        p2 = os.path.join(REPO, "TMessagesProj", "build.gradle")
+        s2 = read(p2)
+        s2, c2 = re.subn(r'applicationId\s+"[^"]+"',
+                         f'applicationId "{NEW_APPLICATION_ID}"', s2)
+        if c2 == 0:
+            print("[WARN] could not set applicationId (neither gradle.properties nor build.gradle)")
+        else:
+            write(p2, s2)
+            print(f"[OK] applicationId -> {NEW_APPLICATION_ID} (build.gradle)")
+            changed.append("TMessagesProj/build.gradle")
+        return
     write(p, s)
-    print(f"[OK] applicationId -> {NEW_APPLICATION_ID}")
-    changed.append("TMessagesProj/build.gradle")
+    print(f"[OK] APP_PACKAGE -> {NEW_APPLICATION_ID} (gradle.properties)")
+    changed.append("gradle.properties")
+    # remove debug suffix ".beta" so the final package is clean
+    app_g = os.path.join(REPO, "TMessagesProj_App", "build.gradle")
+    if os.path.exists(app_g):
+        sa = read(app_g)
+        sa, c3 = re.subn(r'applicationIdSuffix\s+"[^"]+"\n', '', sa, count=1)
+        if c3:
+            write(app_g, sa)
+            print("[OK] removed applicationIdSuffix from debug build")
 
 def make_icons():
     """Generate launcher mipmaps + adaptive icon from assets/logo.png."""

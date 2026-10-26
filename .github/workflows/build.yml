@@ -43,7 +43,7 @@ jobs:
           export KEYSTORE_PASS=android
           export KEY_ALIAS=androiddebugkey
           export KEY_PASS=android
-          ./gradlew assembleAfatDebug --no-daemon --stacktrace
+          ./gradlew :TMessagesProj_App:assembleAfatDebug --no-daemon --stacktrace
 
       - name: Rename APK
         run: |
