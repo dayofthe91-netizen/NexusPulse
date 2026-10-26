@@ -63,8 +63,8 @@ jobs:
 
       - name: Rename APK
         run: |
-          find source/TMessagesProj/build/outputs/apk -name "*.apk" -exec ls -la {} \;
-          find source/TMessagesProj/build/outputs/apk -name "*.apk" -exec cp {} NexusPulse.apk \;
+          find source -name "*.apk" -path "*outputs*" -exec ls -la {} \;
+          find source -name "*.apk" -path "*outputs*" -exec cp {} NexusPulse.apk \;
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
