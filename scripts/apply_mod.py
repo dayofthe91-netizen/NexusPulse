@@ -274,8 +274,8 @@ def make_api_keys():
     if os.path.exists(p):
         print("[SKIP] API_KEYS already exists")
         return
-    app_id = os.environ.get("NEXUS_APP_ID", "6")
-    app_hash = os.environ.get("NEXUS_APP_HASH", "eb06d4abfb49dc3eeb1aeb98ae0f581e")
+    app_id = os.environ.get("NEXUS_APP_ID") or "6"
+    app_hash = os.environ.get("NEXUS_APP_HASH") or "eb06d4abfb49dc3eeb1aeb98ae0f581e"
     write(p, f"APP_ID = {app_id}\nAPP_HASH = {app_hash}\n")
     print(f"[OK] API_KEYS created (APP_ID={app_id})")
     changed.append("API_KEYS (generated)")
