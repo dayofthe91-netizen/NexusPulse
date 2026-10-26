@@ -268,6 +268,18 @@ def load_ghost_config():
     print("[OK] GhostConfig.load() injected into ApplicationLoader")
     changed.append(p)
 
+def make_api_keys():
+    """FOSS build requires API_KEYS file in repo root with APP_ID / APP_HASH."""
+    p = os.path.join(REPO, "API_KEYS")
+    if os.path.exists(p):
+        print("[SKIP] API_KEYS already exists")
+        return
+    app_id = os.environ.get("NEXUS_APP_ID", "6")
+    app_hash = os.environ.get("NEXUS_APP_HASH", "eb06d4abfb49dc3eeb1aeb98ae0f581e")
+    write(p, f"APP_ID = {app_id}\nAPP_HASH = {app_hash}\n")
+    print(f"[OK] API_KEYS created (APP_ID={app_id})")
+    changed.append("API_KEYS (generated)")
+
 # --------------------------------------------------------------------- main
 if __name__ == "__main__":
     if not os.path.isdir(os.path.join(REPO, "TMessagesProj")):
@@ -280,6 +292,7 @@ if __name__ == "__main__":
     rebrand_gradle()
     print("[3/6] icons")
     make_icons()
+    make_api_keys()
     print("[4/6] ghost config")
     add_ghost_config()
     load_ghost_config()
