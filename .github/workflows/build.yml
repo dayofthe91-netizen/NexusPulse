@@ -34,9 +34,6 @@ jobs:
           python3 $GITHUB_WORKSPACE/scripts/apply_mod.py
         working-directory: source
 
-      - name: Show Android SDK components
-        run: ls $ANDROID_HOME/ndk-bundle 2>/dev/null; ls $ANDROID_HOME/ndk 2>/dev/null || true
-
       - name: Build APK (debug, signed with debug key)
         working-directory: source
         run: |
