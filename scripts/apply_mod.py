@@ -207,7 +207,7 @@ def patch_privacy_settings():
         (r'(                    textCheckCell\.setTextAndCheck\(LocaleController\.getString\("ArchiveAndMute", R\.string\.ArchiveAndMute\), archiveChats, false\);\n                    \})',
          r'\1 else if (position == nexusGhostRow) { // NexusPulse ghost mode\n'
          r'                        textCheckCell.setTextAndCheck(LocaleController.getString("NPGhostMode", R.string.NPGhostMode), org.telegram.messenger.GhostConfig.enabled, false);\n'
-         r'                        textCheckCell.setChecked(GhostConfig.enabled);\n                    }', 1),
+         r'                        textCheckCell.setChecked(org.telegram.messenger.GhostConfig.enabled);\n                    }', 1),
         # click handler: toggle + push offline status immediately when enabled
         (r'(            \} else if \(position == newChatsRow\) \{)',
          '            } else if (position == nexusGhostRow) { // NexusPulse ghost mode\n'
