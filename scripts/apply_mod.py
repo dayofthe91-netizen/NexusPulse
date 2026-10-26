@@ -88,6 +88,11 @@ def rebrand_gradle():
             changed.append("TMessagesProj/build.gradle")
         return
     write(p, s)
+    # strip obsolete JVM flags that break Gradle daemon on JDK 17
+    s = read(p)
+    s2, cfix = re.subn(r'org\.gradle\.jvmargs=.*', 'org.gradle.jvmargs=-Xmx4096M -Dfile.encoding=UTF-8', s, count=1)
+    write(p, s2)
+    print(f"[OK] gradle.properties jvmargs sanitized ({cfix} line) for JDK 17")
     print(f"[OK] APP_PACKAGE -> {NEW_APPLICATION_ID} (gradle.properties)")
     changed.append("gradle.properties")
     # remove debug suffix ".beta" so the final package is clean
