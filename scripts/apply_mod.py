@@ -206,16 +206,16 @@ def patch_privacy_settings():
         # bind: check state
         (r'(                    textCheckCell\.setTextAndCheck\(LocaleController\.getString\("ArchiveAndMute", R\.string\.ArchiveAndMute\), archiveChats, false\);\n                    \})',
          r'\1 else if (position == nexusGhostRow) { // NexusPulse ghost mode\n'
-         r'                        textCheckCell.setTextAndCheck(LocaleController.getString("NPGhostMode", R.string.NPGhostMode), GhostConfig.enabled, false);\n'
+         r'                        textCheckCell.setTextAndCheck(LocaleController.getString("NPGhostMode", R.string.NPGhostMode), org.telegram.messenger.GhostConfig.enabled, false);\n'
          r'                        textCheckCell.setChecked(GhostConfig.enabled);\n                    }', 1),
         # click handler: toggle + push offline status immediately when enabled
         (r'(            \} else if \(position == newChatsRow\) \{)',
          '            } else if (position == nexusGhostRow) { // NexusPulse ghost mode\n'
-         '                GhostConfig.setEnabled(!GhostConfig.enabled);\n'
+         '                org.telegram.messenger.GhostConfig.setEnabled(!org.telegram.messenger.GhostConfig.enabled);\n'
          '                if (view instanceof TextCheckCell) {\n'
-         '                    ((TextCheckCell) view).setChecked(GhostConfig.enabled);\n'
+         '                    ((TextCheckCell) view).setChecked(org.telegram.messenger.GhostConfig.enabled);\n'
          '                }\n'
-         '                if (GhostConfig.enabled) {\n'
+         '                if (org.telegram.messenger.GhostConfig.enabled) {\n'
          '                    org.telegram.tgnet.TLRPC.TL_account_updateStatus req = new org.telegram.tgnet.TLRPC.TL_account_updateStatus();\n'
          '                    req.offline = true;\n'
          '                    getConnectionsManager().sendRequest(req, (response, error) -> { });\n'
